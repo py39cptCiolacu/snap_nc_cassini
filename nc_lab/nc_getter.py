@@ -1,12 +1,10 @@
 import cdsapi
 
+from constants import VALID_VARIABLES, ALL_DAY
 
 c = cdsapi.Client()
 
 
-VALID_VARIABLES = {
-    "2m_temperature" : "description for t2m"
-}
 
 
 def check_request(initial_dict: dict) -> dict | None:
@@ -46,8 +44,7 @@ def request_nc(initial_dict: dict, file_name: str) -> str | None :
             "year": checked_dict["year"],
             "month": checked_dict["month"],
             "day": checked_dict["day"], 
-            "time": ["00:00", "04:00", "08:00",
-                     "12:00", "16:00","17:00", "20:00"],
+            "time": ALL_DAY,
             'area': checked_dict["area"],
             'format': 'netcdf'
         },
