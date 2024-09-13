@@ -1,0 +1,115 @@
+.form-page {
+  padding: 20px;
+}
+
+.content-container {
+  display: flex;
+  align-items: flex-start;
+}
+
+.map-wrapper {
+  flex: 3; /* 75% width */
+  margin-right: 20px;
+}
+
+.form-wrapper {
+  flex: 1; /* 25% width */
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.parameters {
+  margin-bottom: 20px;
+}
+
+.parameter-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.parameter-item {
+  display: flex;
+  align-items: center;
+  width: 50%; /* Each item takes up 50% of the width */
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+/* Removed custom tooltip styles since MDBootstrap handles them */
+
+.date-selection {
+  margin-bottom: 20px;
+}
+
+.date-selection label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+/* Error Message Style */
+.error-message {
+  color: red;
+  margin-top: 10px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.format-selection {
+  margin-top: 20px;
+}
+
+.format-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.format-item {
+  display: flex;
+  align-items: center;
+}
+
+.generate-button-container {
+  margin-top: 20px;
+}
+
+.generate-button {
+  padding: 10px;
+  width: 100%;
+  font-size: 16px;
+}
+
+.generate-button.disabled-btn {
+  background-color: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed;
+}
+
+.area-display {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #2E8B57;
+}
+
+@media (max-width: 768px) {
+  /* Responsive layout for smaller screens */
+  .content-container {
+    flex-direction: column;
+  }
+  .map-wrapper,
+  .form-wrapper {
+    flex: none;
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+}

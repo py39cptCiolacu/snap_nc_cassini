@@ -12,6 +12,7 @@ def check_request(initial_dict: dict) -> dict | None:
                       "day",
                       "area"]
 
+
     for must_have_key in must_have_keys:
         if must_have_key not in initial_dict.keys():
             return
@@ -21,7 +22,6 @@ def check_request(initial_dict: dict) -> dict | None:
             return None
 
     return initial_dict
-
 
 def request_nc(initial_dict: dict, file_name: str) -> str | None : 
 
