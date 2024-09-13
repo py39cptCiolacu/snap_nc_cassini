@@ -1,10 +1,7 @@
 import cdsapi
-
-from constants import VALID_VARIABLES, ALL_DAY
+from constants import ALL_DAY, VALID_VARIABLES
 
 c = cdsapi.Client()
-
-
 
 
 def check_request(initial_dict: dict) -> dict | None:
@@ -40,7 +37,7 @@ def request_nc(initial_dict: dict, file_name: str) -> str | None :
         name = "reanalysis-era5-single-levels",  
         request= {
             "product_type": 'reanalysis',
-            "variable": checked_dict["parameters"],
+            "variable": "total_precipitation",
             "year": checked_dict["year"],
             "month": checked_dict["month"],
             "day": checked_dict["day"], 

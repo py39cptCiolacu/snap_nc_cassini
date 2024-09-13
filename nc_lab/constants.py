@@ -1,5 +1,14 @@
 VALID_VARIABLES = {
-    "2m_temperature" : "description for t2m"
+    "2m_temperature" : "Air temperature at 2 meters above the ground.",
+    "2m_dewpoint_temperature" : "Temperature where air becomes saturated with moisture (condensation begins).",
+    "total_precipitation" : "Total amount of rain, snow, etc., measured over a period.",
+    "surface_solar_radiation_downwards" : "Solar energy reaching the Earth's surface.n",
+    "volumetric_soil_water_layer_1" : "Soil moisture content in the uppermost soil layer.",
+    "surface_pressure" : "Atmospheric pressure at the surface level.",
+    "10m_u_component_of_wind" : "Wind speed in the east-west direction, measured at 10 meters.",
+    "10m_v_component_of_wind" : "Wind speed in the north-south direction, measured at 10 meters.",
+    "evaporation" : "Water loss through evaporation from soil and plants.",
+    "soil_temperature_level_1" : "Temperature of the upper soil layer.",
 }
 
 ALL_DAY = ["00:00", "01:00", "02:00", "03:00",  "04:00", 
