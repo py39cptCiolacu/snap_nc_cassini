@@ -129,6 +129,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+snapnc/
 
 # Spyder project settings
 .spyderproject
