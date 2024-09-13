@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import React from 'react';
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Polygon,
+  useMapEvents,
+  Tooltip,
+} from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import './MapSelector.css';
 
-// Fix Leaflet's icon paths with Vite
+// Fix Leaflet's icon paths with Vite -- cica
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -18,43 +26,51 @@ L.Icon.Default.mergeOptions({
   ).href,
 });
 
-function MapSelector({ onAreaSelected }) {
-  const [markers, setMarkers] = useState([]);
-
-  // Component to handle map events
+function MapSelector({ markers, onAreaSelected, clearMarkers }) {
   function LocationMarker() {
     useMapEvents({
       click(e) {
         const { lat, lng } = e.latlng;
 
-        // Add new marker
-        setMarkers((prevMarkers) => [...prevMarkers, { lat, lng }]);
-
-        // Pass selected area to the parent component
         if (onAreaSelected) {
           onAreaSelected({ lat, lng });
         }
       },
     });
-
     return null;
   }
 
+  const polygonPositions = markers.map((marker) => [marker.lat, marker.lng]);
+
   return (
-    <MapContainer
-      center={[0, 0]} // Center the map at the equator
-      zoom={2} // Zoom level to show the whole world
-      style={{ height: '500px', width: '100%' }}
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-      />
-      <LocationMarker />
-      {markers.map((marker, idx) => (
-        <Marker key={idx} position={[marker.lat, marker.lng]}></Marker>
-      ))}
-    </MapContainer>
+    <div className="map-container-wrapper">
+      <MapContainer
+        center={[45.9432, 24.9668]} // Romania
+        zoom={7} // TBD daca ramane asa sau il modificam
+        className="map-container"
+      >
+        <TileLayer
+          attribution="&copy; OpenStreetMap contributors"
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <LocationMarker />
+        {markers.map((marker, idx) => (
+          <Marker key={idx} position={[marker.lat, marker.lng]}>
+            <Tooltip direction="top" offset={[0, -20]} opacity={1}>
+              Lat: {marker.lat.toFixed(4)}, Lng: {marker.lng.toFixed(4)}
+            </Tooltip>
+          </Marker>
+        ))}
+        {markers.length >= 3 && (
+          <Polygon positions={polygonPositions} color="#2E8B57" />
+        )}
+      </MapContainer>
+
+      {/* Reset Button as Overlay */}
+      <button className="reset-button" onClick={clearMarkers}>
+        Reset Selection
+      </button>
+    </div>
   );
 }
 

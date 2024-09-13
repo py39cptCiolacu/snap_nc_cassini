@@ -1,7 +1,7 @@
 .home {
     padding: 80px 20px;
     background-color: #F5F5DC; /* Beige -- TBD if changed */
-    min-height: calc(100vh - 140px); /* Adjust height considering header and footer */
+    min-height: calc(100vh - 140px); /* TBD daca ramane asa */
   }
   
   .home h1 {

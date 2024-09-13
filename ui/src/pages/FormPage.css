@@ -1,0 +1,136 @@
+.form-page {
+  padding: 20px;
+}
+
+.content-container {
+  display: flex;
+  align-items: flex-start;
+}
+
+.map-wrapper {
+  flex: 3; /* 75% width */
+  margin-right: 20px;
+}
+
+.form-wrapper {
+  flex: 1; /* 25% width */
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.parameters {
+  margin-bottom: 20px;
+}
+
+.parameter-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.parameter-item input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.parameter-item label {
+  position: relative;
+  cursor: pointer;
+}
+
+.parameter-item label .tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: #555;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  left: 105%;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.parameter-item label:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.date-selection {
+  margin-bottom: 20px;
+}
+
+.date-selection label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.date-selection input[type="date"] {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+.format-selection {
+  margin-bottom: 20px;
+}
+
+.format-selection label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.format-options {
+  display: flex;
+  flex-direction: column;
+}
+
+.format-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.format-item input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.generate-button-container {
+  text-align: center;
+}
+
+.generate-button {
+  padding: 10px 20px;
+  background-color: #2E8B57;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.generate-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.generate-button:hover:not(:disabled) {
+  background-color: #276746;
+}
+
+@media (max-width: 768px) {
+  .content-container {
+    flex-direction: column;
+  }
+  .map-wrapper,
+  .form-wrapper {
+    flex: none;
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+}
