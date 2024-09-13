@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MapSelector from '../components/MapSelector.jsx';
+import {
+  MDBTooltip,
+  MDBCheckbox,
+  MDBBtn,
+} from 'mdb-react-ui-kit';
 import './FormPage.css';
 
 function FormPage() {
   const [markers, setMarkers] = useState([]);
+  const [calculatedArea, setCalculatedArea] = useState(0);
   const [selectedParameters, setSelectedParameters] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleAreaSelected = (coords) => {
     setMarkers((prevMarkers) => [...prevMarkers, coords]);
@@ -15,9 +22,10 @@ function FormPage() {
 
   const clearMarkers = () => {
     setMarkers([]);
+    setCalculatedArea(0);
   };
 
-  // Placeholders -- de schimbat ulterior
+  // List of placeholder parameters
   const parameters = [
     { name: 'placeholder1', description: 'Description for placeholder1' },
     { name: 'placeholder2', description: 'Description for placeholder2' },
@@ -46,6 +54,20 @@ function FormPage() {
     setEndDate(event.target.value);
   };
 
+  // Validate dates whenever they change
+  useEffect(() => {
+    if (startDate && endDate) {
+      if (startDate > endDate) {
+        setErrorMessage('Start Date cannot be later than End Date.');
+      } else {
+        setErrorMessage('');
+      }
+    } else {
+      // Clear error message if dates are incomplete
+      setErrorMessage('');
+    }
+  }, [startDate, endDate]);
+
   const handleFormatChange = (event) => {
     const { value } = event.target;
     if (event.target.checked) {
@@ -55,12 +77,13 @@ function FormPage() {
     }
   };
 
-  // Generate button enabled or not
+  // Determine if the Generate button should be enabled
   const isGenerateDisabled = !(
     selectedParameters.length > 0 &&
     startDate &&
     endDate &&
-    selectedFormat
+    selectedFormat &&
+    !errorMessage // Ensure there are no errors
   );
 
   return (
@@ -72,29 +95,42 @@ function FormPage() {
             onAreaSelected={handleAreaSelected}
             markers={markers}
             clearMarkers={clearMarkers}
+            setCalculatedArea={setCalculatedArea}
           />
+          {calculatedArea > 0 && (
+            <div className="area-display">
+              Selected Area: {calculatedArea.toFixed(2)} sq km
+            </div>
+          )}
         </div>
         <div className="form-wrapper">
           <h2>Parameters</h2>
           <form>
+            {/* Parameters with Checkboxes and Tooltips */}
             <div className="parameters">
-              {parameters.map((param, index) => (
-                <div key={index} className="parameter-item">
-                  <input
-                    type="checkbox"
-                    id={param.name}
-                    name={param.name}
-                    onChange={handleParameterChange}
-                  />
-                  <label htmlFor={param.name}>
-                    {param.name}
-                    <span className="tooltip-text">{param.description}</span>
-                  </label>
-                </div>
-              ))}
+              <div className="parameter-grid">
+                {parameters.map((param, index) => (
+                  <div key={index} className="parameter-item">
+                    <MDBTooltip
+                      tag="span"
+                      title={param.description}
+                      placement="top"
+                    >
+                      <div>
+                        <MDBCheckbox
+                          name={param.name}
+                          id={param.name}
+                          label={param.name}
+                          onChange={handleParameterChange}
+                        />
+                      </div>
+                    </MDBTooltip>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Start Date -- End Date */}
+            {/* Date Selection */}
             <div className="date-selection">
               <label htmlFor="startDate">Start Date:</label>
               <input
@@ -113,62 +149,67 @@ function FormPage() {
                 value={endDate}
                 onChange={handleEndDateChange}
               />
+
+              {/* Error Message */}
+              {errorMessage && (
+                <div className="error-message">
+                  {errorMessage}
+                </div>
+              )}
             </div>
 
-            {/* Format types */}
+            {/* Format Selection */}
             <div className="format-selection">
               <label>Output Format:</label>
               <div className="format-options">
                 <div className="format-item">
-                  <input
-                    type="checkbox"
+                  <MDBCheckbox
                     id="pdf"
                     value="pdf"
+                    label="PDF"
                     checked={selectedFormat === 'pdf'}
                     onChange={handleFormatChange}
                   />
-                  <label htmlFor="pdf">PDF</label>
                 </div>
                 <div className="format-item">
-                  <input
-                    type="checkbox"
+                  <MDBCheckbox
                     id="json"
                     value="json"
+                    label="JSON"
                     disabled
                   />
-                  <label htmlFor="json">JSON</label>
                 </div>
                 <div className="format-item">
-                  <input
-                    type="checkbox"
+                  <MDBCheckbox
                     id="nc"
                     value="nc"
+                    label="NC"
                     disabled
                   />
-                  <label htmlFor="nc">NC</label>
                 </div>
                 <div className="format-item">
-                  <input
-                    type="checkbox"
+                  <MDBCheckbox
                     id="xlsx"
                     value="xlsx"
+                    label="XLSX"
                     disabled
                   />
-                  <label htmlFor="xlsx">XLSX</label>
                 </div>
               </div>
             </div>
 
             {/* Generate Button */}
             <div className="generate-button-container">
-              <button
+              <MDBBtn
                 type="button"
                 disabled={isGenerateDisabled}
-                className="generate-button"
+                color="success"
+                block
+                className={`generate-button ${isGenerateDisabled ? 'disabled-btn' : ''}`}
                 onClick={() => { /* Add functionality later */ }}
               >
                 Generate
-              </button>
+              </MDBBtn>
             </div>
           </form>
         </div>

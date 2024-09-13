@@ -10,7 +10,7 @@ def test():
 
 @views.route("/api/get_user_interest", methods=["GET"])
 def get_user_interest():
-    
+
     return
 
 
