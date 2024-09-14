@@ -15,17 +15,21 @@ function FormPage() {
   const [currentForm, setCurrentForm] = useState(0); // 0 primul, 1 al doilea
   const [selectedParameters, setSelectedParameters] = useState([]);
   const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
   const [selectedFormat, setSelectedFormat] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleAreaSelected = (coords) => {
-    setMarkers((prevMarkers) => [...prevMarkers, coords]);
+  const [areaErrorMessage, setAreaErrorMessage] = useState('');
+
+  const MAX_AREA = 10000;
+
+  const handleAreaSelected = (corners) => {
+    
   };
 
   const clearMarkers = () => {
     setMarkers([]);
     setCalculatedArea(0);
+    setAreaErrorMessage(''); // Clears area error message
   };
 
   // Formularele -- titluri si parametri
@@ -39,7 +43,8 @@ function FormPage() {
         { name: 'Placeholder4', description: 'Placeholder4 description'},
         { name: 'Placeholder5', description: 'Placeholder5 description'},
         { name: 'Placeholder6', description: 'Placeholder6 description'}
-      ]
+      ],
+      available: true,
     },
     {
       header: 'Urban',
@@ -50,13 +55,14 @@ function FormPage() {
         { name: 'Placeholder4', description: 'Placeholder4 description'},
         { name: 'Placeholder5', description: 'Placeholder5 description'},
         { name: 'Placeholder6', description: 'Placeholder6 description'}
-      ]
+      ],
+      available: false,
     }
   ];
 
-  // Parametrii -- placeholder momentan
   const currentParameters = forms[currentForm].parameters;
   const currentHeader = forms[currentForm].header;
+  const isFormAvailable = forms[currentForm].available;
 
   const handleParameterChange = (event) => {
     const { name, checked } = event.target;
@@ -71,24 +77,6 @@ function FormPage() {
     setStartDate(event.target.value);
   };
 
-  const handleEndDateChange = (event) => {
-    setEndDate(event.target.value);
-  };
-
-  // Valideaza datele
-  useEffect(() => {
-    if (startDate && endDate) {
-      if (startDate > endDate) {
-        setErrorMessage('Start Date cannot be later than End Date.'); // De modificat textul
-      } else {
-        setErrorMessage('');
-      }
-    } else {
-      // Fara eroare daca nu sunt completate datele
-      setErrorMessage('');
-    }
-  }, [startDate, endDate]);
-
   const handleFormatChange = (event) => {
     const { value } = event.target;
     if (event.target.checked) {
@@ -98,26 +86,48 @@ function FormPage() {
     }
   };
 
+  useEffect(() => {
+    if (calculatedArea > 0) {
+      if (calculatedArea > MAX_AREA) {
+        setAreaErrorMessage('The selected area is too large! Please select a smaller area.');
+      } else {
+        setAreaErrorMessage('');
+      }
+    } else {
+      setAreaErrorMessage('');
+    }
+  }, [calculatedArea]);
+
   // Generate button enabled or nah
   const isGenerateDisabled = !(
+    isFormAvailable &&
     selectedParameters.length > 0 &&
     startDate &&
-    endDate &&
     selectedFormat &&
-    !errorMessage
+    calculatedArea > 0 && // Area selected
+    !errorMessage && // No errors
+    !areaErrorMessage // Area size < Threshold
   );
 
+  // Navigare intre formulare
   const handlePrevForm = () => {
-    setCurrentForm((prevForm) => (prevForm === 0 ? forms.length - 1 : prevForm - 1));
-    //Resetare de parametri cand se schimba
-    setSelectedParameters([]);
+    const prevForm = currentForm = 0 ? forms.length - 1 : currentForm - 1;
+    setCurrentForm(prevForm);
+    resetFormFields();
   };
 
   const handleNextForm = () => {
-    setCurrentForm((prevForm) => (prevForm === forms.length - 1 ? 0 : prevForm + 1));
-    //Resetare de parametri cand se schimba
-    setSelectedParameters([]);
+    const nextForm = currentForm === forms.length - 1 ? 0 : currentForm + 1;
+    setCurrentForm(nextForm);
+    resetFormFields();
   };
+
+  const resetFormFields = () => {
+    setSelectedParameters([]);
+    setStartDate('');
+    setSelectedFormat('');
+    setAreaErrorMessage('');
+  }
 
   return (
     <div className="form-page">
@@ -128,25 +138,41 @@ function FormPage() {
         <div className="map-wrapper">
           <MapSelector
             onAreaSelected={handleAreaSelected}
-            markers={markers}
             clearMarkers={clearMarkers}
             setCalculatedArea={setCalculatedArea}
             calculatedArea={calculatedArea}
           />
-          {calculatedArea > 0 && (
-            <div className="area-display">
-              Selected Area: {calculatedArea.toFixed(2)} sq km
-            </div>
-          )}
         </div>
         <div className="form-wrapper">
           {/* Form Navigation Arrows */}
           <div className="form-navigation">
-            <MDBIcon icon="angle-left" size="2x" onClick={handlePrevForm} className="navigation-arrow" aria-label="Previous Form"/>
-            <MDBTypography tag="h2" variant="h4" className="form-header">
-              {currentHeader}
-            </MDBTypography>
-            <MDBIcon icon="angle-right" size="2x" onClick={handleNextForm} className="navigation-arrow" />
+            <MDBTooltip tag="span" title="Previous">
+              <span onClick={handleNextForm} className="navigation-arrow">
+              <MDBIcon fas icon="angle-left" size="2x" />
+              </span>
+            </MDBTooltip>
+             <MDBTooltip
+              tag="span"
+              title={!isFormAvailable ? 'Feature Temporary Unavailable' : ''}
+              >
+              <MDBTypography
+                tag="h2"
+                variant="h4"
+                className={`form-header ${!isFormAvailable ? 'unavailable' : ''}`}
+              >
+                {currentHeader}
+              </MDBTypography>
+            </MDBTooltip>
+            <MDBTooltip tag="span" title="Next">
+              <span onClick={handleNextForm} className="navigation-icon">
+                <MDBIcon
+                  fas
+                  icon="angle-right"
+                  size="2x"
+                  className="navigation-arrow"
+                />
+              </span>
+            </MDBTooltip>
           </div>
           <form>
             {/* Parametetri -- Checkboxes & Tooltips */}
@@ -165,6 +191,7 @@ function FormPage() {
                           id={param.name}
                           label={param.name}
                           onChange={handleParameterChange}
+                          disabled={!isFormAvailable}
                         />
                       </div>
                     </MDBTooltip>
@@ -176,38 +203,21 @@ function FormPage() {
             {/* Date Selection */}
             <div className="date-selection">
               <div className="date-container">
-                <label htmlFor="startDate">Start Date:</label>
+                <label htmlFor="startDate">Please Select Date:</label>
                 <input
                   type="month"
                   id="startDate"
                   name="startDate"
                   value={startDate}
                   onChange={handleStartDateChange}
+                  disabled={!isFormAvailable}
                 />
               </div>
-
-              <div className="date-container">
-                <label htmlFor="endDate">End Date:</label>
-                <input
-                  type="month"
-                  id="endDate"
-                  name="endDate"
-                  value={endDate}
-                  onChange={handleEndDateChange}
-                />
-  </div>
-
-              {/* Error Message */}
-              {errorMessage && (
-                <div className="error-message">
-                  {errorMessage}
-                </div>
-              )}
             </div>
 
             {/* Format Selection */}
             <div className="format-selection">
-              <label>Output Format:</label>
+              <label>Please Select the Output Format:</label>
               <div className="format-options">
                 <div className="format-item">
                   <MDBCheckbox
@@ -216,6 +226,7 @@ function FormPage() {
                     label="PDF"
                     checked={selectedFormat === 'pdf'}
                     onChange={handleFormatChange}
+                    disabled={!isFormAvailable}
                   />
                 </div>
                 <div className="format-item">
@@ -247,18 +258,36 @@ function FormPage() {
 
             {/* Generate Button */}
             <div className="generate-button-container">
-              <MDBBtn
-                type="button"
-                disabled={isGenerateDisabled}
-                color="success"
-                block
-                className={`generate-button ${isGenerateDisabled ? 'disabled-btn' : ''}`}
-                onClick={() => { /* Add functionality later */ }}
+              <MDBTooltip
+                tag="span"
+                title={!isFormAvailable ? 'Feature Temporary Unavailable' : ''}
+              >
+                <MDBBtn
+                  type="button"
+                  disabled={isGenerateDisabled}
+                  color="success"
+                  block
+                  className={`generate-button ${isGenerateDisabled ? 'disabled-btn' : ''}`}
+                  onClick={() => { /* Add functionality later */ }}
               >
                 Generate
               </MDBBtn>
+              </MDBTooltip>
             </div>
           </form>
+          {/* Selected Area Display */}
+          {calculatedArea > 0 && (
+            <div className="selected-area-display">
+              <MDBTypography tag="h5" className={`area-text ${calculatedArea > MAX_AREA ? 'area-error' : ''}`}>
+                Selected Area: {calculatedArea.toFixed(2)} km²
+              </MDBTypography>
+              {areaErrorMessage && (
+                <div className="error-message">
+                  {areaErrorMessage}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

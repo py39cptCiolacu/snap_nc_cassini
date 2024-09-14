@@ -1,24 +1,33 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import './Header.css';
+import logo from '/logo.jpg';
+import { MDBTypography } from 'mdb-react-ui-kit';
 
 function Header() {
   return (
-    <header className="header">
-      <div className="logo">
-        {/* Placeholder pentru logo */}
-        {/* <img src="/path-to-logo/logo.png" alt="Logo" /> */}
-        <h1>SnapNC</h1>
+    <header className="app-header">
+      <div className="logo-title-container">
+        <Link to="/" className="logo-link">
+          <img src={logo} alt="Logo" className="logo-image" />
+          <MDBTypography tag="span" variant="h4" className="app-title">
+            SnapNC
+          </MDBTypography>
+        </Link>
       </div>
-      <nav className="nav">
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/form">Form</Link>
-          </li>
-        </ul>
+      <nav className="nav-links">
+        <NavLink
+          to="/"
+          className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+        >
+          Home
+        </NavLink>
+        <NavLink
+          to="/form"
+          className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+        >
+          Generator
+        </NavLink>
       </nav>
     </header>
   );
