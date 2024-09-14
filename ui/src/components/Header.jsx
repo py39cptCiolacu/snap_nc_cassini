@@ -8,7 +8,7 @@ function Header() {
       <div className="logo">
         {/* Placeholder pentru logo */}
         {/* <img src="/path-to-logo/logo.png" alt="Logo" /> */}
-        <h1>YourAppName</h1>
+        <h1>SnapNC</h1>
       </div>
       <nav className="nav">
         <ul>

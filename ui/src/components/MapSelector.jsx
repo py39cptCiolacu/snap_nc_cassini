@@ -16,13 +16,18 @@ import './MapSelector.css';
 // Fix Leaflet's icon paths with Vite
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: new URL('leaflet/dist/images/marker-icon-2x.png', import.meta.url)
-    .href,
+  iconRetinaUrl: new URL(
+    'leaflet/dist/images/marker-icon-2x.png',
+    import.meta.url
+  ).href,
   iconUrl: new URL('leaflet/dist/images/marker-icon.png', import.meta.url).href,
-  shadowUrl: new URL('leaflet/dist/images/marker-shadow.png', import.meta.url).href,
+  shadowUrl: new URL(
+    'leaflet/dist/images/marker-shadow.png',
+    import.meta.url
+  ).href,
 });
 
-function MapSelector({ markers, onAreaSelected, clearMarkers, setCalculatedArea }) {
+function MapSelector({ markers, onAreaSelected, clearMarkers, setCalculatedArea, calculatedArea }) {
   function LocationMarker() {
     useMapEvents({
       click(e) {
@@ -45,23 +50,23 @@ function MapSelector({ markers, onAreaSelected, clearMarkers, setCalculatedArea 
       // Create a Turf polygon
       const polygon = turf.polygon([[...polygonPositions, polygonPositions[0]]]); // Close the polygon
 
-      // Calculate the area in square kilometers
-      const area = turf.area(polygon) / 1e6; // Convert from square meters to square kilometers
+      // Aria in km^2
+      const area = turf.area(polygon) / 1e6; // Conversie din m^2 in km^2
 
       // Pass the area up to the parent component
       setCalculatedArea(area);
     } else {
-      // Reset the area if less than 3 markers
+      // Reset the area if < than 3 markers
       setCalculatedArea(0);
     }
   }, [markers, polygonPositions, setCalculatedArea]);
 
   return (
-    <div className="map-container-wrapper">
+    <div className="map-container">
       <MapContainer
-        center={[45.9432, 24.9668]} // Center on Romania
-        zoom={7}
-        className="map-container"
+        center={[45.9432, 24.9668]} // Centrat pe Romania
+        zoom={7} // TBD daca ramane asa sau modificam
+        className="leaflet-container"
       >
         {/* Map layers */}
         <TileLayer
@@ -95,6 +100,13 @@ function MapSelector({ markers, onAreaSelected, clearMarkers, setCalculatedArea 
       >
         Reset Selection
       </MDBBtn>
+
+      {/* Calculated Area Display */}
+      {calculatedArea > 0 && (
+        <div className="area-display">
+          Selected Area: {calculatedArea.toFixed(2)} km^2
+        </div>
+      )}
     </div>
   );
 }

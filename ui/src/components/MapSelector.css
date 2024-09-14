@@ -1,9 +1,11 @@
-.map-container-wrapper {
+.map-container {
   position: relative;
+  height: 500px;
+  width: 100%;
 }
 
-.map-container {
-  height: 500px;
+.leaflet-container {
+  height: 100%;
   width: 100%;
   border: 2px solid #2E8B57;
   border-radius: 8px;
@@ -15,10 +17,30 @@
   right: 10px;
   z-index: 1000;
   padding: 5px 10px;
+  transition: transform 0.1s ease-in-out;
+}
+
+.reset-button:active {
+  transform: scale(0.95);
+}
+
+.area-display {
+  margin-top: 10px;
+  position: absolute;
+  bottom: -40px; /* De ajustat daca e ceva */
+  right: 10px;
+  /*background-color: rgba(46, 139, 87, 0.8); -- Daca ni se scoala sa o modificam vreodata si sa o incadram in chenar -- e vorba despre displayed area in km^2 */
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  z-index: 1000;
 }
 
 @media (max-width: 768px) {
   .map-container {
     height: 300px;
+  }
+  .area-display {
+    bottom: -35px; /* De ajustat daca e ceva*/
   }
 }

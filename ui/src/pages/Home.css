@@ -1,15 +1,49 @@
 .home {
-    padding: 80px 20px;
-    background-color: #F5F5DC; /* Beige -- TBD if changed */
-    min-height: calc(100vh - 140px); /* TBD daca ramane asa */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 100vh;
+  background-image: url('/background.png'); /* De updatat cu imaginea de fundal, momentan e placeholder-ish*/
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.text-container {
+  width: 40%; /* De modificat dupa cum arata mai bine*/
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+  padding: 20px;
+  margin-right: 5%;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.fade-in {
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@media (max-width: 768px) {
+  .home-page {
+    justify-content: center;
   }
+
+  .text-container {
+    width: 90%;
+    margin: 0 auto;
+  }
+}
   
-  .home h1 {
-    color: #2E8B57;
-    margin-bottom: 20px;
-  }
+.home h1 {
+  color: #2E8B57;
+  margin-bottom: 20px;
+}
   
-  .home p {
-    color: #333333;
-    font-size: 1.2em;
-  }
+.home p {
+  color: #333333;
+  font-size: 1.2em;
+}
