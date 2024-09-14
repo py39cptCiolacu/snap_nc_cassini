@@ -37,7 +37,7 @@ def request_nc(initial_dict: dict, file_name: str) -> str | None :
         name = "reanalysis-era5-single-levels",  
         request= {
             "product_type": 'reanalysis',
-            "variable": "total_precipitation",
+            "variable": checked_dict["parameters"],
             "year": checked_dict["year"],
             "month": checked_dict["month"],
             "day": checked_dict["day"], 
