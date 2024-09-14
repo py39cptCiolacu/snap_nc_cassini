@@ -1,5 +1,5 @@
 import cdsapi
-from constants import ALL_DAY, VALID_VARIABLES
+from constants import ALL_DAY, VALID_VARIABLES, DAYS_PER_MONTH
 
 c = cdsapi.Client()
 
@@ -67,4 +67,4 @@ def test_download_nc(file_name: str) -> None:
     print("All good")
 
 
-# test_download_nc("a_random_name_2")
+test_download_nc("a_random_name_2")
