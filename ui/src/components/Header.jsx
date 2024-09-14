@@ -6,7 +6,7 @@ function Header() {
   return (
     <header className="header">
       <div className="logo">
-        {/* Placeholder for the logo */}
+        {/* Placeholder pentru logo */}
         {/* <img src="/path-to-logo/logo.png" alt="Logo" /> */}
         <h1>YourAppName</h1>
       </div>
