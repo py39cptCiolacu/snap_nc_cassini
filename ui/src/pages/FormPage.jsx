@@ -4,6 +4,7 @@ import {
   MDBTooltip,
   MDBCheckbox,
   MDBBtn,
+  MDBTypography
 } from 'mdb-react-ui-kit';
 import './FormPage.css';
 
@@ -25,7 +26,7 @@ function FormPage() {
     setCalculatedArea(0);
   };
 
-  // List of placeholder parameters
+  // Parametrii -- placeholder momentan
   const parameters = [
     { name: 'placeholder1', description: 'Description for placeholder1' },
     { name: 'placeholder2', description: 'Description for placeholder2' },
@@ -54,16 +55,16 @@ function FormPage() {
     setEndDate(event.target.value);
   };
 
-  // Validate dates whenever they change
+  // Valideaza datele
   useEffect(() => {
     if (startDate && endDate) {
       if (startDate > endDate) {
-        setErrorMessage('Start Date cannot be later than End Date.');
+        setErrorMessage('Start Date cannot be later than End Date.'); // De modificat textul
       } else {
         setErrorMessage('');
       }
     } else {
-      // Clear error message if dates are incomplete
+      // Fara eroare daca nu sunt completate datele
       setErrorMessage('');
     }
   }, [startDate, endDate]);
@@ -77,18 +78,20 @@ function FormPage() {
     }
   };
 
-  // Determine if the Generate button should be enabled
+  // Generate button enabled or nah
   const isGenerateDisabled = !(
     selectedParameters.length > 0 &&
     startDate &&
     endDate &&
     selectedFormat &&
-    !errorMessage // Ensure there are no errors
+    !errorMessage
   );
 
   return (
     <div className="form-page">
-      <h1>Select Area for Analysis</h1>
+      <MDBTypography tag="h1" variant="h3" className="mb-4">
+        Select Area for Analysis
+      </MDBTypography>
       <div className="content-container">
         <div className="map-wrapper">
           <MapSelector
@@ -96,6 +99,7 @@ function FormPage() {
             markers={markers}
             clearMarkers={clearMarkers}
             setCalculatedArea={setCalculatedArea}
+            calculatedArea={calculatedArea}
           />
           {calculatedArea > 0 && (
             <div className="area-display">
@@ -104,9 +108,11 @@ function FormPage() {
           )}
         </div>
         <div className="form-wrapper">
-          <h2>Parameters</h2>
+          <MDBTypography tag="h2" variant="h4" className="text-center">
+            Parameters
+          </MDBTypography>
           <form>
-            {/* Parameters with Checkboxes and Tooltips */}
+            {/* Parametrii -- Checkboxes & Tooltips */}
             <div className="parameters">
               <div className="parameter-grid">
                 {parameters.map((param, index) => (

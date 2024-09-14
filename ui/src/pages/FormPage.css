@@ -33,12 +33,10 @@
 .parameter-item {
   display: flex;
   align-items: center;
-  width: 50%; /* Each item takes up 50% of the width */
+  width: 50%; /* fiecare parametru ocupa 50% din latime */
   box-sizing: border-box;
   margin-bottom: 10px;
 }
-
-/* Removed custom tooltip styles since MDBootstrap handles them */
 
 .date-selection {
   margin-bottom: 20px;
