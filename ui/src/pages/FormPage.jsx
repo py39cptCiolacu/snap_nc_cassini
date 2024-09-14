@@ -4,13 +4,15 @@ import {
   MDBTooltip,
   MDBCheckbox,
   MDBBtn,
-  MDBTypography
+  MDBTypography,
+  MDBIcon
 } from 'mdb-react-ui-kit';
 import './FormPage.css';
 
 function FormPage() {
   const [markers, setMarkers] = useState([]);
   const [calculatedArea, setCalculatedArea] = useState(0);
+  const [currentForm, setCurrentForm] = useState(0); // 0 primul, 1 al doilea
   const [selectedParameters, setSelectedParameters] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -26,17 +28,35 @@ function FormPage() {
     setCalculatedArea(0);
   };
 
-  // Parametrii -- placeholder momentan
-  const parameters = [
-    { name: 'placeholder1', description: 'Description for placeholder1' },
-    { name: 'placeholder2', description: 'Description for placeholder2' },
-    { name: 'placeholder3', description: 'Description for placeholder3' },
-    { name: 'placeholder4', description: 'Description for placeholder4' },
-    { name: 'placeholder5', description: 'Description for placeholder5' },
-    { name: 'placeholder6', description: 'Description for placeholder6' },
-    { name: 'placeholder7', description: 'Description for placeholder7' },
-    { name: 'placeholder8', description: 'Description for placeholder8' },
+  // Formularele -- titluri si parametri
+  const forms = [
+    {
+      header: 'Agriculture',
+      parameters: [
+        { name: 'Placeholder1', description: 'Placeholder1 description'},
+        { name: 'Placeholder2', description: 'Placeholder2 description'},
+        { name: 'Placeholder3', description: 'Placeholder3 description'},
+        { name: 'Placeholder4', description: 'Placeholder4 description'},
+        { name: 'Placeholder5', description: 'Placeholder5 description'},
+        { name: 'Placeholder6', description: 'Placeholder6 description'}
+      ]
+    },
+    {
+      header: 'Urban',
+      parameters: [
+        { name: 'Placeholder1', description: 'Placeholder1 description'},
+        { name: 'Placeholder2', description: 'Placeholder2 description'},
+        { name: 'Placeholder3', description: 'Placeholder3 description'},
+        { name: 'Placeholder4', description: 'Placeholder4 description'},
+        { name: 'Placeholder5', description: 'Placeholder5 description'},
+        { name: 'Placeholder6', description: 'Placeholder6 description'}
+      ]
+    }
   ];
+
+  // Parametrii -- placeholder momentan
+  const currentParameters = forms[currentForm].parameters;
+  const currentHeader = forms[currentForm].header;
 
   const handleParameterChange = (event) => {
     const { name, checked } = event.target;
@@ -87,6 +107,18 @@ function FormPage() {
     !errorMessage
   );
 
+  const handlePrevForm = () => {
+    setCurrentForm((prevForm) => (prevForm === 0 ? forms.length - 1 : prevForm - 1));
+    //Resetare de parametri cand se schimba
+    setSelectedParameters([]);
+  };
+
+  const handleNextForm = () => {
+    setCurrentForm((prevForm) => (prevForm === forms.length - 1 ? 0 : prevForm + 1));
+    //Resetare de parametri cand se schimba
+    setSelectedParameters([]);
+  };
+
   return (
     <div className="form-page">
       <MDBTypography tag="h1" variant="h3" className="mb-4">
@@ -108,14 +140,19 @@ function FormPage() {
           )}
         </div>
         <div className="form-wrapper">
-          <MDBTypography tag="h2" variant="h4" className="text-center">
-            Parameters
-          </MDBTypography>
+          {/* Form Navigation Arrows */}
+          <div className="form-navigation">
+            <MDBIcon icon="angle-left" size="2x" onClick={handlePrevForm} className="navigation-arrow" aria-label="Previous Form"/>
+            <MDBTypography tag="h2" variant="h4" className="form-header">
+              {currentHeader}
+            </MDBTypography>
+            <MDBIcon icon="angle-right" size="2x" onClick={handleNextForm} className="navigation-arrow" />
+          </div>
           <form>
-            {/* Parametrii -- Checkboxes & Tooltips */}
+            {/* Parametetri -- Checkboxes & Tooltips */}
             <div className="parameters">
               <div className="parameter-grid">
-                {parameters.map((param, index) => (
+                {currentParameters.map((param, index) => (
                   <div key={index} className="parameter-item">
                     <MDBTooltip
                       tag="span"
@@ -138,23 +175,27 @@ function FormPage() {
 
             {/* Date Selection */}
             <div className="date-selection">
-              <label htmlFor="startDate">Start Date:</label>
-              <input
-                type="date"
-                id="startDate"
-                name="startDate"
-                value={startDate}
-                onChange={handleStartDateChange}
-              />
+              <div className="date-container">
+                <label htmlFor="startDate">Start Date:</label>
+                <input
+                  type="month"
+                  id="startDate"
+                  name="startDate"
+                  value={startDate}
+                  onChange={handleStartDateChange}
+                />
+              </div>
 
-              <label htmlFor="endDate">End Date:</label>
-              <input
-                type="date"
-                id="endDate"
-                name="endDate"
-                value={endDate}
-                onChange={handleEndDateChange}
-              />
+              <div className="date-container">
+                <label htmlFor="endDate">End Date:</label>
+                <input
+                  type="month"
+                  id="endDate"
+                  name="endDate"
+                  value={endDate}
+                  onChange={handleEndDateChange}
+                />
+  </div>
 
               {/* Error Message */}
               {errorMessage && (
