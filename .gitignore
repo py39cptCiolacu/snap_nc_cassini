@@ -133,6 +133,9 @@ env.bak/
 venv.bak/
 snapnc/
 
+# Misc
+nc_lab/plots
+
 # Spyder project settings
 .spyderproject
 .spyproject
