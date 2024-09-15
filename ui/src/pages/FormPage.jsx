@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import MapSelector from '../components/MapSelector.jsx';
 import {
   MDBTooltip,
@@ -22,9 +23,60 @@ function FormPage() {
 
   const MAX_AREA = 10000;
 
+  const [selectedAreaCorners, setSelectedAreaCorners] = useState([]);
+
   const handleAreaSelected = (corners) => {
-    
+    setSelectedAreaCorners(corners);
   };
+
+  const handleGenerate = async () => {
+    try {
+      // Prepare the date in 'YYYYMM' format
+      const date = startDate.replace('-', '');
+  
+      // Ensure that the selected area has been defined
+      if (selectedAreaCorners.length !== 4) {
+        alert('Please select an area on the map.');
+        return;
+      }
+
+      // Extract corner coordinates
+      const topRight = selectedAreaCorners[2];  // NorthEast
+      const topLeft = selectedAreaCorners[1];   // NorthWest
+      const bottomRight = selectedAreaCorners[3]; // SouthEast
+      const bottomLeft = selectedAreaCorners[0];  // SouthWest
+
+      // Display a pop-up to notify the user
+      alert('Your download is being processed. Please wait.');
+
+      // Send GET request to the backend
+      const response = await axios.get('/api/get_user_interest', {
+        params: {
+        date: date,
+        trLat: topRight.lat,
+        trLng: topRight.lng,
+        tlLat: topLeft.lat,
+        tlLng: topLeft.lng,
+        brLat: bottomRight.lat,
+        brLng: bottomRight.lng,
+        blLat: bottomLeft.lat,
+        blLng: bottomLeft.lng,
+        },
+        responseType: 'blob'
+      });
+      // Handle the response (PDF file)
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Report_${date}.pdf`); // Set the filename
+        document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    } catch (error) {
+      console.error('Error generating report:', error);
+      alert('An error occurred while generating the report. Please try again.');
+  }
+};
 
   const clearMarkers = () => {
     setMarkers([]);
@@ -37,24 +89,24 @@ function FormPage() {
     {
       header: 'Agriculture',
       parameters: [
-        { name: 'Placeholder1', description: 'Placeholder1 description'},
-        { name: 'Placeholder2', description: 'Placeholder2 description'},
-        { name: 'Placeholder3', description: 'Placeholder3 description'},
-        { name: 'Placeholder4', description: 'Placeholder4 description'},
-        { name: 'Placeholder5', description: 'Placeholder5 description'},
-        { name: 'Placeholder6', description: 'Placeholder6 description'}
+        { name: '2m Temperature', description: 'Air temperature at 2 meters above the ground.'},
+        { name: '2m Dewpoint Temperature', description: 'Temperature where air becomes saturated with moisture.'},
+        { name: 'Volumetric Soil Water', description: 'Soil moisture content in the uppermost soil layer.'},
+        { name: 'Surface Pressure', description: 'Atmospheric pressure at the surface level.'},
+        { name: 'Evaporation', description: 'Water loss through evaporation from soil and plants.'},
+        { name: 'Soil Temperature', description: 'Temperature of the upper soil layer.'}
       ],
       available: true,
     },
     {
       header: 'Urban',
       parameters: [
-        { name: 'Placeholder1', description: 'Placeholder1 description'},
-        { name: 'Placeholder2', description: 'Placeholder2 description'},
-        { name: 'Placeholder3', description: 'Placeholder3 description'},
-        { name: 'Placeholder4', description: 'Placeholder4 description'},
-        { name: 'Placeholder5', description: 'Placeholder5 description'},
-        { name: 'Placeholder6', description: 'Placeholder6 description'}
+        { name: 'Air Quality Index', description: 'Measurement of air pollution levels, indicating how clean or polluted the air is, and what associated health effects might be a concern.'},
+        { name: 'Noise Pollution Levels', description: 'Assessment of noise levels in urban areas, which can impact human health and quality of life.'},
+        { name: 'Traffic Congestion Index', description: 'Indicator of the level of traffic congestion, reflecting the efficiency of transportation networks and potential delays.'},
+        { name: 'Urban Heat Island Effect', description: 'Measurement of temperature differences between urban areas and their rural surroundings, caused by human activities and infrastructure.'},
+        { name: 'Green Space Coverage', description: 'Percentage of urban areas covered by parks, gardens, and other vegetated land.'},
+        { name: 'Building Density', description: 'Evaluation of the number of buildings or floor area per unit of land area, affecting urban planning and infrastructure development.'}
       ],
       available: false,
     }
@@ -111,7 +163,7 @@ function FormPage() {
 
   // Navigare intre formulare
   const handlePrevForm = () => {
-    const prevForm = currentForm = 0 ? forms.length - 1 : currentForm - 1;
+    const prevForm = currentForm === 0 ? forms.length - 1 : currentForm - 1;
     setCurrentForm(prevForm);
     resetFormFields();
   };
@@ -147,7 +199,7 @@ function FormPage() {
           {/* Form Navigation Arrows */}
           <div className="form-navigation">
             <MDBTooltip tag="span" title="Previous">
-              <span onClick={handleNextForm} className="navigation-arrow">
+              <span onClick={handlePrevForm} className="navigation-arrow">
               <MDBIcon fas icon="angle-left" size="2x" />
               </span>
             </MDBTooltip>
@@ -268,7 +320,7 @@ function FormPage() {
                   color="success"
                   block
                   className={`generate-button ${isGenerateDisabled ? 'disabled-btn' : ''}`}
-                  onClick={() => { /* Add functionality later */ }}
+                  onClick={() => { handleGenerate}}
               >
                 Generate
               </MDBBtn>
