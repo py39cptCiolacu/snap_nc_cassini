@@ -13,13 +13,16 @@ def get_user_interest():
     date = data.get("date")
     land = data.get("land")
 
+    # date = "202304"
+    # land = [45, 25, 43, 28]
+
     user_dict = create_dict(date = date, land = land)
     random_file_name = generate_random_filename()
     nc_file = request_nc(initial_dict=user_dict, file_name=random_file_name)
 
     pdf_file = generate_pdf(nc_file)
 
-    return
+    return "<h1> salut </h1>"
 
 
 @views.route("/api/deliver", methods=["POST"])

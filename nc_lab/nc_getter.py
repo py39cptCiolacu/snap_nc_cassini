@@ -1,5 +1,7 @@
 import cdsapi
 from .constants import ALL_DAY, VALID_VARIABLES, DAYS_PER_MONTH
+import shutil
+import os
 
 c = cdsapi.Client()
 
@@ -82,6 +84,14 @@ def request_nc(initial_dict: dict, file_name: str) -> str | None :
         },
         target = f"{file_name}.nc")
     
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    parent_dir = os.path.dirname(current_dir)
+
+    source = os.path.join(parent_dir, f"{file_name}.nc")
+    destination = os.path.join(parent_dir, "results" ,f"{file_name}.nc")
+
+    shutil.move(source, destination)
+
     return f"{file_name}.nc"
 
 
