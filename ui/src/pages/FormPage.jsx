@@ -50,7 +50,7 @@ function FormPage() {
       alert('Your download is being processed. Please wait.');
 
       // Send GET request to the backend
-      const response = await axios.get('/api/get_user_interest', {
+      const response = await axios.get('http:127.0.0.1:5000/api/get_user_interest', {
         params: {
         date: date,
         trLat: topRight.lat,
@@ -320,7 +320,7 @@ function FormPage() {
                   color="success"
                   block
                   className={`generate-button ${isGenerateDisabled ? 'disabled-btn' : ''}`}
-                  onClick={() => { handleGenerate}}
+                  onClick={handleGenerate}
               >
                 Generate
               </MDBBtn>
