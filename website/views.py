@@ -9,12 +9,12 @@ views = Blueprint("views", __name__)
 @views.route("/api/get_user_interest", methods=["GET"])
 def get_user_interest():
 
-    data = request.json
-    date = data.get("date")
-    land = data.get("land")
+    # data = request.json
+    # date = data.get("date")
+    # land = data.get("land")
 
-    # date = "202304"
-    # land = [45, 25, 43, 28]
+    date = "202304"
+    land = [45, 25, 43, 28]
 
     user_dict = create_dict(date = date, land = land)
     random_file_name = generate_random_filename()

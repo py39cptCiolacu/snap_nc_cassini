@@ -147,16 +147,13 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for entry in data %}
                     <tr>
-                        <td>Data 1</td>
-                        <td>Data 2</td>
-                        <td>Data 3</td>
+                        <td>{{ entry.day }}</td>
+                        <td>{{ entry.max_temp }}</td>
+                        <td>{{ entry.min_temp }}</td>
                     </tr>
-                    <tr>
-                        <td>Data 4</td>
-                        <td>Data 5</td>
-                        <td>Data 6</td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>

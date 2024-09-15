@@ -34,9 +34,16 @@ def generate_html(min_val_table_data: list[float], max_val_table_data: list[floa
         html_content= file.read()
     
     template = Template(html_content)
+    temperature_data = []
+
+    day = 1
+    for i in range(len(min_val_table_data)):
+        temperature_data.append({"day": str(day), "min_temp": min_val_table_data[i], "max_temp": max_val_table_data[i]})
+        day += 1    
 
     return template.render(
-        parameter = "random"
+        parameter = "random",
+        data = temperature_data
     )
 
 
