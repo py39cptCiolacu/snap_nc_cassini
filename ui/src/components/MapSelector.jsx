@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   MapContainer,
   TileLayer,
+  Rectangle,
   Marker,
-  Polygon,
-  useMapEvents,
   Tooltip,
+  useMapEvents,
 } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -27,45 +27,82 @@ L.Icon.Default.mergeOptions({
   ).href,
 });
 
-function MapSelector({ markers, onAreaSelected, clearMarkers, setCalculatedArea, calculatedArea }) {
-  function LocationMarker() {
-    useMapEvents({
-      click(e) {
-        const { lat, lng } = e.latlng;
+function MapSelector({
+  onAreaSelected,
+  clearMarkers,
+  setCalculatedArea,
+  calculatedArea,
+}) {
+  const [rectangleBounds, setRectangleBounds] = useState(null);
+  const [cornerMarkers, setCornerMarkers] = useState([]);
+  const isDragging = useRef(false);
+  const startLatLng = useRef(null);
 
-        // Pass the new marker up to the parent component
-        if (onAreaSelected) {
-          onAreaSelected({ lat, lng });
+  function RectangleSelector() {
+    useMapEvents({
+      mousedown(e) {
+        if (e.originalEvent.shiftKey && e.originalEvent.button === 0) {
+          // Start rectangle selection
+          isDragging.current = true;
+          startLatLng.current = e.latlng;
+        }
+      },
+      mousemove(e) {
+        if (isDragging.current && startLatLng.current) {
+          // Update rectangle bounds
+          const bounds = L.latLngBounds(startLatLng.current, e.latlng);
+          setRectangleBounds(bounds);
+        }
+      },
+      mouseup(e) {
+        if (isDragging.current && startLatLng.current) {
+          // Finish rectangle selection
+          isDragging.current = false;
+          const bounds = L.latLngBounds(startLatLng.current, e.latlng);
+          setRectangleBounds(bounds);
+
+          // Extract corner points
+          const corners = [
+            bounds.getSouthWest(),
+            bounds.getNorthWest(),
+            bounds.getNorthEast(),
+            bounds.getSouthEast(),
+          ];
+
+          // Set corner markers
+          setCornerMarkers(corners);
+
+          // Calculate area using Turf.js
+          const linearRing = corners.map((latlng) => [latlng.lng, latlng.lat]);
+          // Close the polygon by adding the first point at the end
+          linearRing.push([corners[0].lng, corners[0].lat]);
+
+          const polygon = turf.polygon([linearRing]);
+          const area = turf.area(polygon) / 1e6; // din m^2 in km^2
+          setCalculatedArea(area);
+
+          if (onAreaSelected) {
+            onAreaSelected(corners);
+          }
         }
       },
     });
     return null;
   }
 
-  // Prepare positions for the Polygon
-  const polygonPositions = markers.map((marker) => [marker.lng, marker.lat]); // Note: Turf uses [lng, lat]
-
-  useEffect(() => {
-    if (markers.length >= 3) {
-      // Create a Turf polygon
-      const polygon = turf.polygon([[...polygonPositions, polygonPositions[0]]]); // Close the polygon
-
-      // Aria in km^2
-      const area = turf.area(polygon) / 1e6; // Conversie din m^2 in km^2
-
-      // Pass the area up to the parent component
-      setCalculatedArea(area);
-    } else {
-      // Reset the area if < than 3 markers
-      setCalculatedArea(0);
-    }
-  }, [markers, polygonPositions, setCalculatedArea]);
+  const handleClearSelection = () => {
+    setRectangleBounds(null);
+    setCornerMarkers([]);
+    setCalculatedArea(0);
+    startLatLng.current = null;
+    clearMarkers();
+  };
 
   return (
     <div className="map-container">
       <MapContainer
         center={[45.9432, 24.9668]} // Centrat pe Romania
-        zoom={7} // TBD daca ramane asa sau modificam
+        zoom={7}
         className="leaflet-container"
       >
         {/* Map layers */}
@@ -73,22 +110,19 @@ function MapSelector({ markers, onAreaSelected, clearMarkers, setCalculatedArea,
           attribution="&copy; OpenStreetMap contributors"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <LocationMarker />
-        {/* Markers */}
-        {markers.map((marker, idx) => (
-          <Marker key={idx} position={[marker.lat, marker.lng]}>
+        <RectangleSelector />
+        {/* Draw Rectangle */}
+        {rectangleBounds && (
+          <Rectangle bounds={rectangleBounds} color="#2E8B57" />
+        )}
+        {/* Corner Markers */}
+        {cornerMarkers.map((latlng, idx) => (
+          <Marker key={idx} position={latlng}>
             <Tooltip direction="top" offset={[0, -20]} opacity={1}>
-              Lat: {marker.lat.toFixed(4)}, Lng: {marker.lng.toFixed(4)}
+              Lat: {latlng.lat.toFixed(4)}, Lng: {latlng.lng.toFixed(4)}
             </Tooltip>
           </Marker>
         ))}
-        {/* Polygon */}
-        {markers.length >= 3 && (
-          <Polygon
-            positions={markers.map((marker) => [marker.lat, marker.lng])}
-            color="#2E8B57"
-          />
-        )}
       </MapContainer>
 
       {/* Reset Button */}
@@ -96,17 +130,10 @@ function MapSelector({ markers, onAreaSelected, clearMarkers, setCalculatedArea,
         color="danger"
         size="sm"
         className="reset-button"
-        onClick={clearMarkers}
+        onClick={handleClearSelection}
       >
         Reset Selection
       </MDBBtn>
-
-      {/* Calculated Area Display */}
-      {calculatedArea > 0 && (
-        <div className="area-display">
-          Selected Area: {calculatedArea.toFixed(2)} km^2
-        </div>
-      )}
     </div>
   );
 }
