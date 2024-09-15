@@ -1,40 +1,81 @@
 .home {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   min-height: 100vh;
-  background-image: url('/background.png'); /* De updatat cu imaginea de fundal, momentan e placeholder-ish*/
+  background-image: url('/background.png');
   background-size: cover;
   background-position: center;
   position: relative;
 }
 
-.text-container {
-  width: 40%; /* De modificat dupa cum arata mai bine*/
+.content-wrapper {
+  display: flex;
+  width: 90%;
+  max-width: 1200px;
+}
+
+.brochure-container {
+  width: 70%;
   background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
   padding: 20px;
-  margin-right: 5%;
+  margin-right: 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brochure-image {
+  max-width: 100%;
+  height: auto;
+}
+
+.text-container {
+  width: 45%;
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+  padding: 20px;
+  margin-right: auto;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.fade-in {
-  animation: fadeIn 1s ease-in-out;
+.fade-in-left {
+  animation: fadeInLeft 1s ease-in-out;
 }
 
-@keyframes fadeIn {
+.fade-in-right {
+  animation: fadeInRight 1s ease-in-out;
+}
+
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInRight {
   from { opacity: 0; transform: translateX(50px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
+.logo-title-container {
+  margin-bottom: 20px;
+}
+
+.app-title {
+  font-weight: bold;
+}
+
 @media (max-width: 768px) {
-  .home-page {
-    justify-content: center;
+  .content-wrapper {
+    flex-direction: column;
+    align-items: center;
   }
 
+  .brochure-container,
   .text-container {
     width: 90%;
-    margin: 0 auto;
+    margin: 10px 0;
   }
 }
   
