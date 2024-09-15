@@ -129,9 +129,10 @@ def plot_min_max_temperatures(min_values: list[float], max_values: list[float], 
     plt.savefig(output_file)
     plt.close()
 
-# Example usage
-nc_file = "test.nc"
-min_values, max_values = calc_min_max_by_day('t2m', nc_file)
+# # Example usage
+# nc_file = "2m_temperature.nc"
+# min_values, max_values = calc_min_max_by_day('t2m', nc_file)
 
-directory = "./plots"
-plot_min_max_temperatures(min_values=min_values, max_values=max_values, directory=directory)
+# directory = "./plots"
+# plot_min_max_temperatures(min_values=min_values, max_values=max_values, directory=directory)
+
